@@ -13,7 +13,7 @@ validateGlobOpts({
   caches: {}
 });
 /* => [
-  TypeError: `sync` option is deprecated and there is no need to pass any values to the option, but true is provided.,
+  Error: `sync` option is deprecated and there’s no need to pass any values to that option, but true was provided.,
   TypeError: node-glob expected `mark` option to be a Boolean value, but got '/'.,
   Error: node-glob doesn't have `caches` option. Probably you meant `cache`.
 ] */
@@ -67,7 +67,7 @@ const notOk = {
   symlink: {}
 };
 
-const results = validateGlobOpts(ok);
+const results = validateGlobOpts(notOk);
 results.length; //=> 4
 results[0];
 //=>  TypeError: node-glob expected `root` option to be a directory path (string), but got <Buffer 48 69>.

@@ -66,15 +66,15 @@ test('validateGlobOpts()', t => {
 
   t.strictEqual(
     results[0],
-    'TypeError: `sync` option is deprecated ' +
-    'and there is no need to pass any values to the option, but false is provided.',
-    'should invalidate non-string directory-related options.'
+    'Error: `sync` option is deprecated and ' +
+    'there’s no need to pass any values to that option, but false was provided.',
+    'should invalidate deprecated `sync` option.'
   );
 
   t.strictEqual(
     results[1],
     'TypeError: node-glob expected `root` option to be a directory path (string), but got <Buffer 5f>.',
-    'should invalidate deprecated `sync` option.'
+    'should invalidate non-string directory-related options.'
   );
 
   t.strictEqual(

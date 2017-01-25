@@ -75,10 +75,10 @@ module.exports = function validateGlobOpts(obj) {
   const results = [];
 
   if (obj.sync !== undefined) {
-    results.push(new TypeError(
-      `\`sync\` option is deprecated and there is no need to pass any values to the option, but ${
+    results.push(new Error(
+      `\`sync\` option is deprecated and there’s no need to pass any values to that option, but ${
         inspect(obj.sync)
-      } is provided.`
+      } was provided.`
     ));
   }
 
