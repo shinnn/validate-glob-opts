@@ -11,7 +11,6 @@ const isPlainObj = require('is-plain-obj');
 const ERROR_MESSAGE = 'Expected node-glob options to be an object';
 const INVALID_CACHE_MESSAGE = 'Expected every value in the `cache` option to be ' +
                               'true, false, \'FILE\', \'DIR\' or an array';
-
 const INVALID_STAT_CACHE_MESSAGE = 'Expected every value in the `statCache` option to be a ' +
                                    'fs.Stats instance';
 
@@ -49,6 +48,9 @@ const typos = {
   matchbase: 'matchBase',
   noDir: 'nodir',
   realPath: 'realpath',
+  realPathCache: 'realpathCache',
+  realpathCaches: 'realpathCache',
+  realPathCaches: 'realpathCache',
   caches: 'cache',
   statcache: 'statCache',
   statCaches: 'statCache',
@@ -104,22 +106,42 @@ module.exports = function validateGlobOpts(obj) {
 
   if (obj.cache !== undefined) {
     if (!isPlainObj(obj.cache)) {
-      results.push(new TypeError(
-        `node-glob expected \`cache\` option to be an object, but got ${inspect(obj.cache)}.`
-      ));
+      results.push(new TypeError(`node-glob expected \`cache\` option to be an object, but got ${
+        inspect(obj.cache)
+      }.`));
     } else {
       for (const field of Object.keys(obj.cache)) {
         const val = obj.cache[field];
 
         if (typeof val !== 'string') {
           if (typeof val !== 'boolean' && !Array.isArray(val)) {
-            results.push(new TypeError(
-              `${INVALID_CACHE_MESSAGE}, but got an invalid value ${inspect(val)} in \`${field}\` property.`
-            ));
+            results.push(new TypeError(`${
+              INVALID_CACHE_MESSAGE
+            }, but found an invalid value ${inspect(val)} in \`${field}\` property.`));
           }
         } else if (val !== 'FILE' && val !== 'DIR') {
-          results.push(new Error(
-            `${INVALID_CACHE_MESSAGE}, but got an invalid string ${inspect(val)} in \`${field}\` property.`
+          results.push(new Error(`${
+            INVALID_CACHE_MESSAGE
+          }, but found an invalid string ${inspect(val)} in \`${field}\` property.`));
+        }
+      }
+    }
+  }
+
+  if (obj.realpathCache !== undefined) {
+    if (!isPlainObj(obj.realpathCache)) {
+      results.push(new TypeError(
+        `node-glob expected \`realpathCache\` option to be an object, but got ${inspect(obj.realpathCache)}.`
+      ));
+    } else {
+      for (const field of Object.keys(obj.realpathCache)) {
+        const val = obj.realpathCache[field];
+
+        if (typeof val !== 'string') {
+          results.push(new TypeError(
+            `Expected every value in the \`realpathCache\` option to be a string, but found a non-string value ${
+              inspect(val)
+            } in \`${field}\` property.`
           ));
         }
       }
@@ -137,13 +159,13 @@ module.exports = function validateGlobOpts(obj) {
 
         if (val === null || typeof val !== 'object' || Array.isArray(val)) {
           results.push(new TypeError(
-            `${INVALID_STAT_CACHE_MESSAGE}, but got an invalid value ${
+            `${INVALID_STAT_CACHE_MESSAGE}, but found an invalid value ${
               inspect(val)
             } in \`${field}\` property.`
           ));
         } else if (typeof val.mode !== 'number') {
           results.push(new Error(
-            `${INVALID_STAT_CACHE_MESSAGE}, but got an invalid object ${
+            `${INVALID_STAT_CACHE_MESSAGE}, but found an invalid object ${
               inspect(val)
             } in \`${field}\` property, which doesn't have a valid file mode.`
           ));
@@ -163,7 +185,7 @@ module.exports = function validateGlobOpts(obj) {
 
         if (typeof val !== 'boolean') {
           results.push(new TypeError(
-            `Expected every value in the \`symlink\` option to be Boolean, but got an invalid value ${
+            `Expected every value in the \`symlink\` option to be Boolean, but found an invalid value ${
               inspect(val)
             } in \`${field}\` property.`
           ));

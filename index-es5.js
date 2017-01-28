@@ -11,7 +11,6 @@ var isPlainObj = require('is-plain-obj');
 var ERROR_MESSAGE = 'Expected node-glob options to be an object';
 var INVALID_CACHE_MESSAGE = 'Expected every value in the `cache` option to be ' +
                               'true, false, \'FILE\', \'DIR\' or an array';
-
 var INVALID_STAT_CACHE_MESSAGE = 'Expected every value in the `statCache` option to be a ' +
                                    'fs.Stats instance';
 
@@ -49,6 +48,9 @@ var typos = {
   matchbase: 'matchBase',
   noDir: 'nodir',
   realPath: 'realpath',
+  realPathCache: 'realpathCache',
+  realpathCaches: 'realpathCache',
+  realPathCaches: 'realpathCache',
   caches: 'cache',
   statcache: 'statCache',
   statCaches: 'statCache',
@@ -106,9 +108,7 @@ module.exports = function validateGlobOpts(obj) {
 
   if (obj.cache !== undefined) {
     if (!isPlainObj(obj.cache)) {
-      results.push(new TypeError(
-        ("node-glob expected `cache` option to be an object, but got " + (inspect(obj.cache)) + ".")
-      ));
+      results.push(new TypeError(("node-glob expected `cache` option to be an object, but got " + (inspect(obj.cache)) + ".")));
     } else {
       for (var i$2 = 0, list$2 = Object.keys(obj.cache); i$2 < list$2.length; i$2 += 1) {
         var field = list$2[i$2];
@@ -117,13 +117,29 @@ module.exports = function validateGlobOpts(obj) {
 
         if (typeof val$2 !== 'string') {
           if (typeof val$2 !== 'boolean' && !Array.isArray(val$2)) {
-            results.push(new TypeError(
-              (INVALID_CACHE_MESSAGE + ", but got an invalid value " + (inspect(val$2)) + " in `" + field + "` property.")
-            ));
+            results.push(new TypeError((INVALID_CACHE_MESSAGE + ", but found an invalid value " + (inspect(val$2)) + " in `" + field + "` property.")));
           }
         } else if (val$2 !== 'FILE' && val$2 !== 'DIR') {
-          results.push(new Error(
-            (INVALID_CACHE_MESSAGE + ", but got an invalid string " + (inspect(val$2)) + " in `" + field + "` property.")
+          results.push(new Error((INVALID_CACHE_MESSAGE + ", but found an invalid string " + (inspect(val$2)) + " in `" + field + "` property.")));
+        }
+      }
+    }
+  }
+
+  if (obj.realpathCache !== undefined) {
+    if (!isPlainObj(obj.realpathCache)) {
+      results.push(new TypeError(
+        ("node-glob expected `realpathCache` option to be an object, but got " + (inspect(obj.realpathCache)) + ".")
+      ));
+    } else {
+      for (var i$3 = 0, list$3 = Object.keys(obj.realpathCache); i$3 < list$3.length; i$3 += 1) {
+        var field$1 = list$3[i$3];
+
+        var val$3 = obj.realpathCache[field$1];
+
+        if (typeof val$3 !== 'string') {
+          results.push(new TypeError(
+            ("Expected every value in the `realpathCache` option to be a string, but found a non-string value " + (inspect(val$3)) + " in `" + field$1 + "` property.")
           ));
         }
       }
@@ -136,18 +152,18 @@ module.exports = function validateGlobOpts(obj) {
         ("node-glob expected `statCache` option to be an object, but got " + (inspect(obj.statCache)) + ".")
       ));
     } else {
-      for (var i$3 = 0, list$3 = Object.keys(obj.statCache); i$3 < list$3.length; i$3 += 1) {
-        var field$1 = list$3[i$3];
+      for (var i$4 = 0, list$4 = Object.keys(obj.statCache); i$4 < list$4.length; i$4 += 1) {
+        var field$2 = list$4[i$4];
 
-        var val$3 = obj.statCache[field$1];
+        var val$4 = obj.statCache[field$2];
 
-        if (val$3 === null || typeof val$3 !== 'object' || Array.isArray(val$3)) {
+        if (val$4 === null || typeof val$4 !== 'object' || Array.isArray(val$4)) {
           results.push(new TypeError(
-            (INVALID_STAT_CACHE_MESSAGE + ", but got an invalid value " + (inspect(val$3)) + " in `" + field$1 + "` property.")
+            (INVALID_STAT_CACHE_MESSAGE + ", but found an invalid value " + (inspect(val$4)) + " in `" + field$2 + "` property.")
           ));
-        } else if (typeof val$3.mode !== 'number') {
+        } else if (typeof val$4.mode !== 'number') {
           results.push(new Error(
-            (INVALID_STAT_CACHE_MESSAGE + ", but got an invalid object " + (inspect(val$3)) + " in `" + field$1 + "` property, which doesn't have a valid file mode.")
+            (INVALID_STAT_CACHE_MESSAGE + ", but found an invalid object " + (inspect(val$4)) + " in `" + field$2 + "` property, which doesn't have a valid file mode.")
           ));
         }
       }
@@ -160,14 +176,14 @@ module.exports = function validateGlobOpts(obj) {
         ("node-glob expected `symlinks` option to be an object, but got " + (inspect(obj.symlinks)) + ".")
       ));
     } else {
-      for (var i$4 = 0, list$4 = Object.keys(obj.symlinks); i$4 < list$4.length; i$4 += 1) {
-        var field$2 = list$4[i$4];
+      for (var i$5 = 0, list$5 = Object.keys(obj.symlinks); i$5 < list$5.length; i$5 += 1) {
+        var field$3 = list$5[i$5];
 
-        var val$4 = obj.symlinks[field$2];
+        var val$5 = obj.symlinks[field$3];
 
-        if (typeof val$4 !== 'boolean') {
+        if (typeof val$5 !== 'boolean') {
           results.push(new TypeError(
-            ("Expected every value in the `symlink` option to be Boolean, but got an invalid value " + (inspect(val$4)) + " in `" + field$2 + "` property.")
+            ("Expected every value in the `symlink` option to be Boolean, but found an invalid value " + (inspect(val$5)) + " in `" + field$3 + "` property.")
           ));
         }
       }
@@ -182,21 +198,21 @@ module.exports = function validateGlobOpts(obj) {
         ));
       }
     } else {
-      for (var i$5 = 0, list$5 = obj.ignore; i$5 < list$5.length; i$5 += 1) {
-        var val$5 = list$5[i$5];
+      for (var i$6 = 0, list$6 = obj.ignore; i$6 < list$6.length; i$6 += 1) {
+        var val$6 = list$6[i$6];
 
-        if (typeof val$5 !== 'string') {
+        if (typeof val$6 !== 'string') {
           results.push(new TypeError(
             'Expected every value in the `ignore` option to be a string, ' +
-            "but the array includes a non-string value " + (inspect(val$5)) + "."
+            "but the array includes a non-string value " + (inspect(val$6)) + "."
           ));
         }
       }
     }
   }
 
-  for (var i$6 = 0, list$6 = Object.keys(obj); i$6 < list$6.length; i$6 += 1) {
-    var key = list$6[i$6];
+  for (var i$7 = 0, list$7 = Object.keys(obj); i$7 < list$7.length; i$7 += 1) {
+    var key = list$7[i$7];
 
     var correctName = typos[key];
 
