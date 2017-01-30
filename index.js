@@ -14,8 +14,8 @@ const INVALID_CACHE_MESSAGE = 'Expected every value in the `cache` option to be 
 const INVALID_STAT_CACHE_MESSAGE = 'Expected every value in the `statCache` option to be a ' +
                                    'fs.Stats instance';
 
-const pathOptions = ['cwd', 'root'];
-const booleanOptions = [
+const pathOptions = new Set(['cwd', 'root']);
+const booleanOptions = new Set([
   'dot',
   'nomount',
   'mark',
@@ -35,27 +35,27 @@ const booleanOptions = [
   'follow',
   'realpath',
   'absolute'
-];
-const typos = {
-  noMount: 'nomount',
-  nouniq: 'nounique',
-  noUnique: 'nounique',
-  noNull: 'nonull',
-  noBrace: 'nobrace',
-  noGlobStar: 'noglobstar',
-  noExt: 'noext',
-  noCase: 'nocase',
-  matchbase: 'matchBase',
-  noDir: 'nodir',
-  realPath: 'realpath',
-  realPathCache: 'realpathCache',
-  realpathCaches: 'realpathCache',
-  realPathCaches: 'realpathCache',
-  caches: 'cache',
-  statcache: 'statCache',
-  statCaches: 'statCache',
-  symlink: 'symlinks'
-};
+]);
+const typos = new Map([
+  ['noMount', 'nomount'],
+  ['nouniq', 'nounique'],
+  ['noUnique', 'nounique'],
+  ['noNull', 'nonull'],
+  ['noBrace', 'nobrace'],
+  ['noGlobStar', 'noglobstar'],
+  ['noExt', 'noext'],
+  ['noCase', 'nocase'],
+  ['matchbase', 'matchBase'],
+  ['noDir', 'nodir'],
+  ['realPath', 'realpath'],
+  ['realPathCache', 'realpathCache'],
+  ['realpathCaches', 'realpathCache'],
+  ['realPathCaches', 'realpathCache'],
+  ['caches', 'cache'],
+  ['statcache', 'statCache'],
+  ['statCaches', 'statCache'],
+  ['symlink', 'symlinks']
+]);
 
 module.exports = function validateGlobOpts(obj) {
   if (obj === '') {
@@ -130,9 +130,9 @@ module.exports = function validateGlobOpts(obj) {
 
   if (obj.realpathCache !== undefined) {
     if (!isPlainObj(obj.realpathCache)) {
-      results.push(new TypeError(
-        `node-glob expected \`realpathCache\` option to be an object, but got ${inspect(obj.realpathCache)}.`
-      ));
+      results.push(new TypeError(`node-glob expected \`realpathCache\` option to be an object, but got ${
+        inspect(obj.realpathCache)
+      }.`));
     } else {
       for (const field of Object.keys(obj.realpathCache)) {
         const val = obj.realpathCache[field];
@@ -150,9 +150,9 @@ module.exports = function validateGlobOpts(obj) {
 
   if (obj.statCache !== undefined) {
     if (!isPlainObj(obj.statCache)) {
-      results.push(new TypeError(
-        `node-glob expected \`statCache\` option to be an object, but got ${inspect(obj.statCache)}.`
-      ));
+      results.push(new TypeError(`node-glob expected \`statCache\` option to be an object, but got ${
+        inspect(obj.statCache
+      )}.`));
     } else {
       for (const field of Object.keys(obj.statCache)) {
         const val = obj.statCache[field];
@@ -176,9 +176,9 @@ module.exports = function validateGlobOpts(obj) {
 
   if (obj.symlinks !== undefined) {
     if (!isPlainObj(obj.symlinks)) {
-      results.push(new TypeError(
-        `node-glob expected \`symlinks\` option to be an object, but got ${inspect(obj.symlinks)}.`
-      ));
+      results.push(new TypeError(`node-glob expected \`symlinks\` option to be an object, but got ${
+        inspect(obj.symlinks
+      )}.`));
     } else {
       for (const field of Object.keys(obj.symlinks)) {
         const val = obj.symlinks[field];
@@ -216,9 +216,9 @@ module.exports = function validateGlobOpts(obj) {
   }
 
   for (const key of Object.keys(obj)) {
-    const correctName = typos[key];
+    const correctName = typos.get(key);
 
-    if (correctName) {
+    if (correctName !== undefined) {
       results.push(new Error(
         `node-glob doesn't have \`${key}\` option. Probably you meant \`${correctName}\`.`
       ));
