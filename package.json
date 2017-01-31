@@ -5,14 +5,13 @@
   "repository": "shinnn/validate-glob-opts",
   "author": "Shinnosuke Watanabe (https://github.com/shinnn)",
   "scripts": {
-    "pretest": "eslint --fix --format=codeframe --rule='complexity: off' index.js test.js && buble index.js --output=index-es5.js --yes=dangerousForOf",
+    "pretest": "eslint --fix --format=codeframe index.js test.js",
     "test": "node --throw-deprecation test.js",
     "coverage": "istanbul cover --print=both test.js"
   },
   "license": "MIT",
-  "main": "index-es5.js",
   "files": [
-    "index-es5.js"
+    "index.js"
   ],
   "keywords": [
     "glob",
@@ -28,13 +27,15 @@
   },
   "devDependencies": {
     "@shinnn/eslint-config-node": "^3.0.0",
-    "buble": "^0.15.2",
     "eslint": "^3.14.1",
     "graceful-fs": "^4.1.11",
     "istanbul": "^0.4.5",
     "tape": "^4.6.3"
   },
   "eslintConfig": {
-    "extends": "@shinnn/node"
+    "extends": "@shinnn/node",
+    "rules": {
+      "complexity": "off"
+    }
   }
 }
