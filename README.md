@@ -33,9 +33,10 @@ npm install validate-glob-opts
 const validateGlobOpts = require('validate-glob-opts');
 ```
 
-### validateGlobOpts(*obj*)
+### validateGlobOpts(*obj* [, *customValidations*])
 
 *obj*: `Object` ([`glob` options](https://github.com/isaacs/node-glob#options))  
+*customValidations*: `Array<function>`  
 Return: `Array` of errors
 
 It strictly validates `glob` options, for example,
@@ -77,6 +78,25 @@ results[2];
 //=> TypeError: Expected every value in the `ignore` option to be a string, but the array includes a non-string value 1.
 results[3];
 //=> Error: node-glob doesn't have `symlink` option. Probably you meant `symlinks`.
+```
+
+#### User-defined validation
+
+You can provide your own validations by passing an array of functions to the second parameter. Each function receives the object and should return an error when the object is not valid.
+
+```javascript
+validateGlobOpts({realPath: true, nodir: true});
+/*=> [
+  Error: node-glob doesn't have `realPath` option. Probably you meant `realpath`.
+] */
+
+validateGlobOpts({realPath: true, nodir: true}, [
+  obj => obj.nodir ? new Error('My app doesn\'t support `nodir` option.') : null
+]);
+/*=> [
+  Error: node-glob doesn't have `realPath` option. Probably you meant `realpath`.
+  TypeError: My app doesn't support `nodir` option.
+] */
 ```
 
 ## License

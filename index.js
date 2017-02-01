@@ -6,7 +6,9 @@
 
 const inspect = require('util').inspect;
 
+const arrayToSentence = require('array-to-sentence');
 const isPlainObj = require('is-plain-obj');
+const indexedFilter = require('indexed-filter');
 
 const ERROR_MESSAGE = 'Expected node-glob options to be an object';
 const INVALID_CACHE_MESSAGE = 'Expected every value in the `cache` option to be ' +
@@ -57,7 +59,29 @@ const typos = new Map([
   ['symlink', 'symlinks']
 ]);
 
-module.exports = function validateGlobOpts(obj) {
+const isNonFn = val => typeof val !== 'function';
+const stringifyFilterResult = obj => `${inspect(obj.value)} (at ${obj.index})`;
+
+module.exports = function validateGlobOpts(obj, additionalValidations) {
+  if (additionalValidations !== undefined) {
+    if (!Array.isArray(additionalValidations)) {
+      throw new TypeError(`Expected an array of functions, but got a non-array value ${
+        inspect(additionalValidations)
+      }.`);
+    }
+
+    const nonFunctions = indexedFilter(additionalValidations, isNonFn);
+    const nonFunctionCount = nonFunctions.length;
+
+    if (nonFunctionCount !== 0) {
+      throw new TypeError(`Expected every element in the array to be a function, but found ${
+        nonFunctionCount === 1 ? 'a non-function value' : 'non-function values'
+      } in the array: ${arrayToSentence(nonFunctions.map(stringifyFilterResult))}.`);
+    }
+  } else {
+    additionalValidations = [];
+  }
+
   if (obj === '') {
     return [new TypeError(`${ERROR_MESSAGE}, but got '' (empty string).`)];
   }
@@ -219,9 +243,25 @@ module.exports = function validateGlobOpts(obj) {
     const correctName = typos.get(key);
 
     if (correctName !== undefined) {
-      results.push(new Error(
-        `node-glob doesn't have \`${key}\` option. Probably you meant \`${correctName}\`.`
-      ));
+      results.push(new Error(`node-glob doesn't have \`${key}\` option. Probably you meant \`${
+        correctName
+      }\`.`));
+    }
+  }
+
+  for (const fn of additionalValidations) {
+    const additionalResult = fn(obj);
+
+    if (additionalResult) {
+      if (!(additionalResult instanceof Error)) {
+        throw new TypeError(
+          'Expected an additional validation function to return an error, but returned ' +
+          inspect(additionalResult) +
+          '.'
+        );
+      }
+
+      results.push(additionalResult);
     }
   }
 

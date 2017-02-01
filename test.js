@@ -199,3 +199,50 @@ test('validateGlobOpts()', t => {
   t.end();
 });
 
+test('validateGlobOpts() with custom validations', t => {
+  t.deepEqual(
+    main({noExt: true}, [
+      obj => new Error(`Error!: ${Object.keys(obj).join('')}`),
+      () => new TypeError('TypeError!')
+    ]).map(String),
+    [
+      'Error: node-glob doesn\'t have `noExt` option. Probably you meant `noext`.',
+      'Error: Error!: noExt',
+      'TypeError: TypeError!'
+    ],
+    'should apply custom validations.'
+  );
+
+  t.deepEqual(
+    main({}, []).map(String),
+    [],
+    'should apply no custom validations if the array is empty.'
+  );
+
+  t.throws(
+    () => main({}, Math.sign),
+    /^TypeError.* Expected an array of functions, but got a non-array value \[Function: sign]\./,
+    'should throw an error when the second argument is a non-array value.'
+  );
+
+  t.throws(
+    () => main({}, [0.5]),
+    /^TypeError.*found a non-function value in the array: 0\.5 \(at 0\)\./,
+    'should throw an error when the second argument includes a non-function value.'
+  );
+
+  t.throws(
+    () => main({}, [{a: 0}, Number, '?']),
+    /^TypeError.*found non-function values in the array: { a: 0 } \(at 0\) and '\?' \(at 2\)\./,
+    'should throw an error when the second argument includes non-function values.'
+  );
+
+  t.throws(
+    () => main({}, [() => null, () => []]),
+    /^TypeError.*Expected an additional validation function to return an error, but returned \[]\./,
+    'should throw an error when the custom validation returns a non-error value.'
+  );
+
+  t.end();
+});
+
