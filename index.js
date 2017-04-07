@@ -4,7 +4,7 @@
 */
 'use strict';
 
-const inspect = require('util').inspect;
+const {inspect} = require('util');
 
 const arrayToSentence = require('array-to-sentence');
 const isPlainObj = require('is-plain-obj');
@@ -62,8 +62,17 @@ const typos = new Map([
 const isNonFn = val => typeof val !== 'function';
 const stringifyFilterResult = obj => `${inspect(obj.value)} (at ${obj.index})`;
 
-module.exports = function validateGlobOpts(obj, additionalValidations) {
-  if (additionalValidations !== undefined) {
+module.exports = function validateGlobOpts(...args) {
+  // obj, additionalValidations
+  const argLen = args.length;
+
+  if (argLen > 2) {
+    throw new TypeError(`Expected 0, 1 or 2 arguments ([<object>, <array>]), but got ${argLen}.`);
+  }
+
+  const [obj, additionalValidations] = args;
+
+  if (argLen === 2) {
     if (!Array.isArray(additionalValidations)) {
       throw new TypeError(`Expected an array of functions, but got a non-array value ${
         inspect(additionalValidations)
@@ -78,8 +87,6 @@ module.exports = function validateGlobOpts(obj, additionalValidations) {
         nonFunctionCount === 1 ? 'a non-function value' : 'non-function values'
       } in the array: ${arrayToSentence(nonFunctions.map(stringifyFilterResult))}.`);
     }
-  } else {
-    additionalValidations = [];
   }
 
   if (obj === '') {
@@ -249,7 +256,7 @@ module.exports = function validateGlobOpts(obj, additionalValidations) {
     }
   }
 
-  for (const fn of additionalValidations) {
+  for (const fn of additionalValidations || []) {
     const additionalResult = fn(obj);
 
     if (additionalResult) {

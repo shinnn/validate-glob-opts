@@ -3,7 +3,7 @@
 const {Stats} = require('fs');
 
 const main = require('.');
-const {Stats: GracefulFsStats} = require('graceful-fs');
+const GracefulFsStats = require('graceful-fs').Stats;
 const test = require('tape');
 
 test('validateGlobOpts()', t => {
@@ -246,3 +246,12 @@ test('validateGlobOpts() with custom validations', t => {
   t.end();
 });
 
+test('validateGlobOpts() with too many arguments', t => {
+  t.throws(
+    () => main({}, [], null),
+    /^TypeError: Expected 0, 1 or 2 arguments \(\[<object>, <array>]\), but got 3\./,
+    'should throw an error.'
+  );
+
+  t.end();
+});
