@@ -1,6 +1,6 @@
 {
   "name": "validate-glob-opts",
-  "version": "0.4.0",
+  "version": "0.5.0",
   "description": "Validate glob options",
   "repository": "shinnn/validate-glob-opts",
   "author": "Shinnosuke Watanabe (https://github.com/shinnn)",
@@ -29,15 +29,12 @@
   },
   "devDependencies": {
     "@shinnn/eslint-config-node": "^3.0.0",
-    "eslint": "^3.14.1",
+    "eslint": "^3.19.0",
     "graceful-fs": "^4.1.11",
     "istanbul": "^0.4.5",
     "tape": "^4.6.3"
   },
   "eslintConfig": {
-    "extends": "@shinnn/node",
-    "rules": {
-      "complexity": "off"
-    }
+    "extends": "@shinnn/node"
   }
 }
