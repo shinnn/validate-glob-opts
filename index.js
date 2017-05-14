@@ -9,6 +9,7 @@ const {inspect} = require('util');
 const arrayToSentence = require('array-to-sentence');
 const isPlainObj = require('is-plain-obj');
 const indexedFilter = require('indexed-filter');
+const inspectWithKind = require('inspect-with-kind');
 
 const ERROR_MESSAGE = 'Expected node-glob options to be an object';
 const INVALID_CACHE_MESSAGE = 'Expected every value in the `cache` option to be ' +
@@ -63,7 +64,6 @@ const isNonFn = val => typeof val !== 'function';
 const stringifyFilterResult = obj => `${inspect(obj.value)} (at ${obj.index})`;
 
 module.exports = function validateGlobOpts(...args) {
-  // obj, additionalValidations
   const argLen = args.length;
 
   if (argLen > 2) {
@@ -75,7 +75,7 @@ module.exports = function validateGlobOpts(...args) {
   if (argLen === 2) {
     if (!Array.isArray(additionalValidations)) {
       throw new TypeError(`Expected an array of functions, but got a non-array value ${
-        inspect(additionalValidations)
+        inspectWithKind(additionalValidations)
       }.`);
     }
 
@@ -97,12 +97,8 @@ module.exports = function validateGlobOpts(...args) {
     return [];
   }
 
-  if (typeof obj !== 'object') {
-    return [new TypeError(`${ERROR_MESSAGE}, but got ${inspect(obj)}.`)];
-  }
-
-  if (Array.isArray(obj)) {
-    return [new TypeError(`Expected node-glob options to be an object, but got an array ${inspect(obj)}.`)];
+  if (typeof obj !== 'object' || Array.isArray(obj)) {
+    return [new TypeError(`${ERROR_MESSAGE}, but got ${inspectWithKind(obj)}.`)];
   }
 
   const results = [];
@@ -120,7 +116,7 @@ module.exports = function validateGlobOpts(...args) {
 
     if (val !== undefined && typeof obj[prop] !== 'string') {
       results.push(new TypeError(
-        `node-glob expected \`${prop}\` option to be a directory path (string), but got ${inspect(val)}.`
+        `node-glob expected \`${prop}\` option to be a directory path (string), but got ${inspectWithKind(val)}.`
       ));
     }
   }
@@ -130,7 +126,7 @@ module.exports = function validateGlobOpts(...args) {
 
     if (val !== undefined && typeof obj[prop] !== 'boolean') {
       results.push(new TypeError(
-        `node-glob expected \`${prop}\` option to be a Boolean value, but got ${inspect(val)}.`
+        `node-glob expected \`${prop}\` option to be a Boolean value, but got ${inspectWithKind(val)}.`
       ));
     }
   }
@@ -138,7 +134,7 @@ module.exports = function validateGlobOpts(...args) {
   if (obj.cache !== undefined) {
     if (!isPlainObj(obj.cache)) {
       results.push(new TypeError(`node-glob expected \`cache\` option to be an object, but got ${
-        inspect(obj.cache)
+        inspectWithKind(obj.cache)
       }.`));
     } else {
       for (const field of Object.keys(obj.cache)) {
@@ -148,7 +144,7 @@ module.exports = function validateGlobOpts(...args) {
           if (typeof val !== 'boolean' && !Array.isArray(val)) {
             results.push(new TypeError(`${
               INVALID_CACHE_MESSAGE
-            }, but found an invalid value ${inspect(val)} in \`${field}\` property.`));
+            }, but found an invalid value ${inspectWithKind(val)} in \`${field}\` property.`));
           }
         } else if (val !== 'FILE' && val !== 'DIR') {
           results.push(new Error(`${
@@ -162,7 +158,7 @@ module.exports = function validateGlobOpts(...args) {
   if (obj.realpathCache !== undefined) {
     if (!isPlainObj(obj.realpathCache)) {
       results.push(new TypeError(`node-glob expected \`realpathCache\` option to be an object, but got ${
-        inspect(obj.realpathCache)
+        inspectWithKind(obj.realpathCache)
       }.`));
     } else {
       for (const field of Object.keys(obj.realpathCache)) {
@@ -171,7 +167,7 @@ module.exports = function validateGlobOpts(...args) {
         if (typeof val !== 'string') {
           results.push(new TypeError(
             `Expected every value in the \`realpathCache\` option to be a string, but found a non-string value ${
-              inspect(val)
+              inspectWithKind(val)
             } in \`${field}\` property.`
           ));
         }
@@ -182,8 +178,8 @@ module.exports = function validateGlobOpts(...args) {
   if (obj.statCache !== undefined) {
     if (!isPlainObj(obj.statCache)) {
       results.push(new TypeError(`node-glob expected \`statCache\` option to be an object, but got ${
-        inspect(obj.statCache
-      )}.`));
+        inspectWithKind(obj.statCache)
+      }.`));
     } else {
       for (const field of Object.keys(obj.statCache)) {
         const val = obj.statCache[field];
@@ -208,8 +204,8 @@ module.exports = function validateGlobOpts(...args) {
   if (obj.symlinks !== undefined) {
     if (!isPlainObj(obj.symlinks)) {
       results.push(new TypeError(`node-glob expected \`symlinks\` option to be an object, but got ${
-        inspect(obj.symlinks
-      )}.`));
+        inspectWithKind(obj.symlinks)
+      }.`));
     } else {
       for (const field of Object.keys(obj.symlinks)) {
         const val = obj.symlinks[field];
@@ -217,7 +213,7 @@ module.exports = function validateGlobOpts(...args) {
         if (typeof val !== 'boolean') {
           results.push(new TypeError(
             `Expected every value in the \`symlink\` option to be Boolean, but found an invalid value ${
-              inspect(val)
+              inspectWithKind(val)
             } in \`${field}\` property.`
           ));
         }
@@ -230,7 +226,7 @@ module.exports = function validateGlobOpts(...args) {
       if (typeof obj.ignore !== 'string') {
         results.push(new TypeError(
           `node-glob expected \`ignore\` option to be an array or string, but got ${
-            inspect(obj.ignore)
+            inspectWithKind(obj.ignore)
           }.`
         ));
       }
@@ -239,7 +235,7 @@ module.exports = function validateGlobOpts(...args) {
         if (typeof val !== 'string') {
           results.push(new TypeError(
             'Expected every value in the `ignore` option to be a string, ' +
-            `but the array includes a non-string value ${inspect(val)}.`
+            `but the array includes a non-string value ${inspectWithKind(val)}.`
           ));
         }
       }
@@ -261,11 +257,9 @@ module.exports = function validateGlobOpts(...args) {
 
     if (additionalResult) {
       if (!(additionalResult instanceof Error)) {
-        throw new TypeError(
-          'Expected an additional validation function to return an error, but returned ' +
-          inspect(additionalResult) +
-          '.'
-        );
+        throw new TypeError(`Expected an additional validation function to return an error, but returned ${
+          inspectWithKind(additionalResult)
+        }.`);
       }
 
       results.push(additionalResult);

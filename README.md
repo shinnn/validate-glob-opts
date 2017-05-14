@@ -14,7 +14,7 @@ validateGlobOpts({
 });
 /* => [
   Error: `sync` option is deprecated and there’s no need to pass any values to that option, but true was provided.,
-  TypeError: node-glob expected `mark` option to be a Boolean value, but got '/'.,
+  TypeError: node-glob expected `mark` option to be a Boolean value, but got '/' (string).,
   Error: node-glob doesn't have `caches` option. Probably you meant `cache`.
 ] */
 ```
@@ -37,7 +37,7 @@ const validateGlobOpts = require('validate-glob-opts');
 
 *obj*: `Object` ([`glob` options](https://github.com/isaacs/node-glob#options))  
 *customValidations*: `Array<function>`  
-Return: `Array` of errors
+Return: `Array<Error>`
 
 It strictly validates `glob` options, for example,
 
@@ -73,9 +73,9 @@ results.length; //=> 4
 results[0];
 //=>  TypeError: node-glob expected `root` option to be a directory path (string), but got <Buffer 48 69>.
 results[1];
-//=> TypeError: node-glob expected `nodir` option to be a Boolean value, but got NaN.
+//=> TypeError: node-glob expected `nodir` option to be a Boolean value, but got NaN (number).
 results[2];
-//=> TypeError: Expected every value in the `ignore` option to be a string, but the array includes a non-string value 1.
+//=> TypeError: Expected every value in the `ignore` option to be a string, but the array includes a non-string value 1 (number).
 results[3];
 //=> Error: node-glob doesn't have `symlink` option. Probably you meant `symlinks`.
 ```

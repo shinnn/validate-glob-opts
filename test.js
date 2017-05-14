@@ -45,7 +45,7 @@ test('validateGlobOpts()', t => {
 
   t.deepEqual(
     main([1, 2]).map(({message}) => message),
-    ['Expected node-glob options to be an object, but got an array [ 1, 2 ].'],
+    ['Expected node-glob options to be an object, but got [ 1, 2 ] (array).'],
     'should invalidate an array.'
   );
 
@@ -57,7 +57,7 @@ test('validateGlobOpts()', t => {
     nomount: 1,
     cache: new Uint8Array(),
     realpathCache: new Uint16Array(),
-    statCache: new ArrayBuffer(),
+    statCache: new WeakMap(),
     symlinks: /.+/,
     ignore: new Set([null]),
     symlink: {}
@@ -80,7 +80,7 @@ test('validateGlobOpts()', t => {
 
   t.strictEqual(
     results[2],
-    'TypeError: node-glob expected `nomount` option to be a Boolean value, but got 1.',
+    'TypeError: node-glob expected `nomount` option to be a Boolean value, but got 1 (number).',
     'should invalidate boolean options receiving non-boolean value.'
   );
 
@@ -98,13 +98,13 @@ test('validateGlobOpts()', t => {
 
   t.strictEqual(
     results[5],
-    'TypeError: node-glob expected `statCache` option to be an object, but got ArrayBuffer { byteLength: 0 }.',
+    'TypeError: node-glob expected `statCache` option to be an object, but got WeakMap {}.',
     'should invalidate non-object `statCache` option.'
   );
 
   t.strictEqual(
     results[6],
-    'TypeError: node-glob expected `symlinks` option to be an object, but got /.+/.',
+    'TypeError: node-glob expected `symlinks` option to be an object, but got /.+/ (regexp).',
     'should invalidate non-object `symlinks` option.'
   );
 
@@ -148,8 +148,8 @@ test('validateGlobOpts()', t => {
 
   t.strictEqual(
     anotherResults[0],
-    'TypeError: Expected every value in the `cache` option to be ' +
-    'true, false, \'FILE\', \'DIR\' or an array, but found an invalid value 1 in `/foo/4` property.',
+    'TypeError: Expected every value in the `cache` option to be true, false, \'FILE\', \'DIR\' ' +
+    'or an array, but found an invalid value 1 (number) in `/foo/4` property.',
     'should invalidate wrong-type cache.'
   );
 
@@ -164,7 +164,7 @@ test('validateGlobOpts()', t => {
   t.strictEqual(
     anotherResults[2],
     'TypeError: Expected every value in the `realpathCache` option to be a string, ' +
-    'but found a non-string value Infinity in `/foo/1` property.',
+    'but found a non-string value Infinity (number) in `/foo/1` property.',
     'should invalidate non-string realpath cache.'
   );
 
@@ -192,7 +192,7 @@ test('validateGlobOpts()', t => {
   t.strictEqual(
     anotherResults[6],
     'TypeError: Expected every value in the `ignore` option to be a string, ' +
-    'but the array includes a non-string value [ \'b\' ].',
+    'but the array includes a non-string value [ \'b\' ] (array).',
     'should invalidate non-string ignore pattern.'
   );
 
@@ -239,7 +239,7 @@ test('validateGlobOpts() with custom validations', t => {
 
   t.throws(
     () => main({}, [() => null, () => []]),
-    /^TypeError.*Expected an additional validation function to return an error, but returned \[]\./,
+    /^TypeError.*Expected an additional validation function to return an error, but returned \[] \(array\)\./,
     'should throw an error when the custom validation returns a non-error value.'
   );
 
