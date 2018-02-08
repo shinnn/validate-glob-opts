@@ -121,6 +121,12 @@ module.exports = function validateGlobOpts(...args) {
 		}
 	}
 
+	if (obj.nodir === true) {
+		if (obj.mark === true) {
+			results.push(new TypeError('Expected `mark` option not to be `true` when `nodir` option is `true`, because there is no need to differentiate directory paths from file paths when `nodir` option is enabled, but got `true`.'));
+		}
+	}
+
 	if (obj.cache !== undefined) {
 		if (!isPlainObj(obj.cache)) {
 			results.push(new TypeError(`node-glob expected \`cache\` option to be an object, but got ${

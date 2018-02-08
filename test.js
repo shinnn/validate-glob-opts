@@ -55,6 +55,8 @@ test('validateGlobOpts()', t => {
 		root: Buffer.from('_'),
 		dot: true,
 		nomount: 1,
+		nodir: true,
+		mark: true,
 		cache: new Uint8Array(),
 		realpathCache: new Uint16Array(),
 		statCache: new WeakMap(),
@@ -63,7 +65,7 @@ test('validateGlobOpts()', t => {
 		symlink: {}
 	}).map(String);
 
-	t.equal(results.length, 9, 'should invalidate invalid glob options.');
+	t.equal(results.length, 10, 'should invalidate invalid glob options.');
 
 	t.equal(
 		results[0],
@@ -86,41 +88,48 @@ test('validateGlobOpts()', t => {
 
 	t.equal(
 		results[3],
+		'TypeError: Expected `mark` option not to be `true` when `nodir` option is `true`, because there is no need to differentiate directory paths from file paths when `nodir` option is enabled, but got `true`.',
+		'should disallow `mark` option to be enabled along with `nodir` option.'
+	);
+
+	t.equal(
+		results[4],
 		'TypeError: node-glob expected `cache` option to be an object, but got Uint8Array [  ].',
 		'should invalidate non-object `cache` option.'
 	);
 
 	t.equal(
-		results[4],
+		results[5],
 		'TypeError: node-glob expected `realpathCache` option to be an object, but got Uint16Array [  ].',
 		'should invalidate non-object `statCache` option.'
 	);
 
 	t.equal(
-		results[5],
+		results[6],
 		'TypeError: node-glob expected `statCache` option to be an object, but got WeakMap {}.',
 		'should invalidate non-object `statCache` option.'
 	);
 
 	t.equal(
-		results[6],
+		results[7],
 		'TypeError: node-glob expected `symlinks` option to be an object, but got /.+/ (regexp).',
 		'should invalidate non-object `symlinks` option.'
 	);
 
 	t.equal(
-		results[7],
+		results[8],
 		'TypeError: node-glob expected `ignore` option to be an array or string, but got Set { null }.',
 		'should invalidate wrong-type `ignore` option.'
 	);
 
 	t.equal(
-		results[8],
+		results[9],
 		'Error: node-glob doesn\'t have `symlink` option. Probably you meant `symlinks`.',
 		'should invalidate typos.'
 	);
 
 	const anotherResults = main({
+		nodir: true,
 		cache: {
 			'/foo/0': false,
 			'/foo/1': true,
