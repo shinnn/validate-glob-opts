@@ -1,6 +1,6 @@
 {
 	"name": "validate-glob-opts",
-	"version": "1.0.0",
+	"version": "1.0.1",
 	"description": "Validate glob options",
 	"repository": "shinnn/validate-glob-opts",
 	"author": "Shinnosuke Watanabe (https://github.com/shinnn)",
