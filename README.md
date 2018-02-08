@@ -1,6 +1,6 @@
 # validate-glob-opts
 
-[![NPM version](https://img.shields.io/npm/v/validate-glob-opts.svg)](https://www.npmjs.com/package/validate-glob-opts)
+[![npm version](https://img.shields.io/npm/v/validate-glob-opts.svg)](https://www.npmjs.com/package/validate-glob-opts)
 [![Build Status](https://travis-ci.org/shinnn/validate-glob-opts.svg?branch=master)](https://travis-ci.org/shinnn/validate-glob-opts)
 [![Coverage Status](https://img.shields.io/coveralls/shinnn/validate-glob-opts.svg)](https://coveralls.io/r/shinnn/validate-glob-opts)
 
@@ -21,7 +21,7 @@ validateGlobOpts({
 
 ## Installation
 
-[Use npm.](https://docs.npmjs.com/cli/install)
+[Use](https://docs.npmjs.com/cli/install) [npm](https://docs.npmjs.com/getting-started/what-is-npm).
 
 ```
 npm install validate-glob-opts
@@ -101,6 +101,6 @@ validateGlobOpts({realPath: true, nodir: true}, [
 
 ## License
 
-Copyright (c) 2017 [Shinnosuke Watanabe](https://github.com/shinnn)
+Copyright (c) 2017 - 2018 [Shinnosuke Watanabe](https://github.com/shinnn)
 
 Licensed under [the MIT License](./LICENSE).
